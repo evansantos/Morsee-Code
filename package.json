@@ -1,13 +1,15 @@
 {
   "name": "morsee-converter",
   "version": "1.0.0",
-  "description": "",
+  "description": null,
   "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
+    "@types/react": "16.7.18",
+    "@types/react-dom": "16.0.11",
     "morsee": "1.0.1",
-    "react": "16.7.0-alpha.2",
-    "react-dom": "16.7.0-alpha.2",
+    "react": "next",
+    "react-dom": "next",
     "react-scripts": "2.0.3"
   },
   "devDependencies": {
