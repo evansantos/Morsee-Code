@@ -1,10 +1,16 @@
 import React, { FunctionComponent } from 'react';
 import { render } from 'react-dom';
-import { encode } from 'morsee';
+import { encode, decode } from 'morsee';
 
 import './styles.css';
 
-const convertCodeToAudio = ({
+const arr: string[] = ['.', '-'];
+const compareInput = (valueTyped: string) =>
+  arr.some((v: string) => {
+    return !!valueTyped.includes(v);
+  });
+
+const convertCodeToMorseeAudio = ({
   value = null,
   shouldPlay = false
 }: {
@@ -56,17 +62,36 @@ const convertCodeToAudio = ({
   return false;
 };
 
+const convertCodeToNPLAudio = ({
+  value = null,
+  shouldPlay = false
+}: {
+  value?: string;
+  shouldPlay?: boolean;
+}) => {
+  if (!value || !shouldPlay) {
+    return false;
+  }
+
+  const msg: any = new SpeechSynthesisUtterance(value);
+  window.speechSynthesis.speak(msg);
+
+  return false;
+};
+
 const TextEditor: FunctionComponent<{ onChangeHandler?: void }> = ({
   onChangeHandler
 }) => {
   return (
     <textarea
-      placeholder="Insert your text here"
+      placeholder="Insert your text/code morsee here"
       rows="20"
       cols="40"
       id="textInput"
       onChange={(evt: FormEvent<HTMLSelectElement>) =>
-        onChangeHandler(encode(evt.currentTarget.value))
+        compareInput(evt.currentTarget.value)
+          ? onChangeHandler(decode(evt.currentTarget.value))
+          : onChangeHandler(encode(evt.currentTarget.value))
       }
     />
   );
@@ -81,7 +106,9 @@ const MorseeContent: FunctionComponent<{ updatedCode?: string }> = ({
       <p>{updatedCode}</p>
       <button
         onClick={(evt: React.MouseEvent<HTMLElement>) =>
-          convertCodeToAudio({ value: updatedCode, shouldPlay: true })
+          compareInput(updatedCode)
+            ? convertCodeToMorseeAudio({ value: updatedCode, shouldPlay: true })
+            : convertCodeToNPLAudio({ value: updatedCode, shouldPlay: true })
         }>
         Play it
       </button>
